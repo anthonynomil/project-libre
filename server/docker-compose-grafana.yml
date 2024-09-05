@@ -1,0 +1,38 @@
+version: "3.5"
+
+name: "solo-sail-monitoring"
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_LOG_LEVEL=debug
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "${GRAFANA_EXTERNAL_HTTP_PORTS}:3000"
+    networks:
+      - solo-sail-server
+
+  loki:
+    image: grafana/loki:latest
+    volumes:
+      - loki-data:/loki
+    networks:
+      - solo-sail-server
+
+  promtail:
+    image: grafana/promtail:latest
+    volumes:
+      - .grafana/promtail-config.yml:/etc/promtail/config.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers
+    networks:
+      - solo-sail-server
+
+volumes:
+  grafana-data:
+  loki-data:
+
+networks:
+  solo-sail-server:
+    external: true

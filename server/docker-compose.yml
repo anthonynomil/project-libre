@@ -1,0 +1,59 @@
+﻿version: "3.5"
+
+name: "solo-sail-server"
+
+services:
+#  netshoot:
+#    image: nicolaka/netshoot
+#    command: >
+#      tail -f /dev/null
+#    networks:
+#      - solo-sail
+
+  backend:
+    image: ss-backend:dev
+    build:
+      context: .
+      dockerfile: Web/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${BACKEND_ENVIRONMENT}
+      - ASPNETCORE_HTTP_PORTS=${BACKEND_INTERNAL_HTTP_PORTS}
+#      - ASPNETCORE_HTTPS_PORTS=${BACKEND_INTERNAL_HTTPS_PORTS}
+      - ConnectionStrings__DefaultConnection=Server=database;PORT=${MYSQL_PORT};Database=${MYSQL_DATABASE};Uid=${MYSQL_USER};Pwd=${MYSQL_PASSWORD};
+    ports:
+      - "${BACKEND_EXTERNAL_HTTP_PORTS}:${BACKEND_INTERNAL_HTTP_PORTS}"
+#      - "${BACKEND_EXTERNAL_HTTP_PORTS}:${BACKEND_INTERNAL_HTTP_PORTS}"
+    networks:
+      - solo-sail
+    depends_on:
+      database:
+        condition: service_healthy
+    restart: on-failure
+
+  database:
+    image: mysql:8.3.0
+    environment:
+      - MYSQL_PORT=${MYSQL_PORT}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - database-data:/var/lib/mysql
+    ports:
+      - "${MYSQL_EXTERNAL_PORT}:${MYSQL_PORT}"
+    networks:
+      - solo-sail
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "database"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: on-failure
+
+volumes:
+  database-data:
+
+networks:
+  solo-sail:
+    name: solo-sail-server

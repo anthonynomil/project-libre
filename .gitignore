@@ -1,0 +1,22 @@
+# General
+.env
+.git
+
+# IDE
+.idea
+.vscode
+
+# .NET
+.config
+bin
+obj
+
+# Resharper
+ProjetLibre.sln.DotSettings.user
+
+# ProjetLibre Client
+/Web/Client/
+
+.DS_Store
+
+client/node_modules/
