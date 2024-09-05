@@ -104,7 +104,6 @@ export default function ClientsInfosPanel(props: { clientId: null | number }) {
                 <Typography variant={"body1"}>
                   {data?.value?.financialInformation?.paymentMethod
                     ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                      //@ts-expect-error
                       PaymentMethod[data?.value?.financialInformation?.paymentMethod]
                     : "N/A"}
                 </Typography>
