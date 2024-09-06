@@ -9,8 +9,7 @@ builder.SetupDependencyInjection();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-    app.SetupDevEnvironment();
+app.SetupDevEnvironment();
 
 using (var scope = app.Services.CreateScope())
     await scope.InitializationRoutine();
